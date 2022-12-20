@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from .models import RequestLog
 from rest_framework.response import Response
-from .serializers import RequestLogSerializer
+# from .serializers import RequestLogSerializer
 from rest_framework import status
-# from rest_framework.views import APIView
 import requests
 import datetime
 
@@ -18,8 +17,8 @@ def all_logs(request):
     created_at = convert(response.headers['Date'])
     response_at = convert(response.headers['Date'])
     url = response.url
-    request_headers = response.headers['Content-type']
-    request_textfield = response.headers['Content-type']
+    request_headers = request.headers
+    request_textfield = request.body
     response_code = response.status_code
     response_headers = response.headers['Content-type']
     response = response.text
@@ -35,15 +34,10 @@ def all_logs(request):
         'response_headers': response_headers,
         'response': response
     }
-    serializer = RequestLogSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
+    # serializer = RequestLogSerializer(data=data)
+    # if serializer.is_valid():
+    #     serializer.save()
+
+    RequestLog.objects.create(**data)
 
     return render(request, 'log1/index.html')
-
-
-# class RequestLogAPI(APIView):
-#     def get(self, request, format=None):
-#         re = RequestLog.objects.all()
-#         serializer = RequestLogSerializer(re, many=True)
-#         return Response(serializer.data)
